@@ -51,17 +51,7 @@ public class DirectedGraph {
 	}
 	
 	public Iterator<Edge> incidentEdges(Vertex v) {
-		ArrayList<Edge> ea = new ArrayList<Edge>();
-		Iterator<Edge> itr = edges.iterator();
-		while (itr.hasNext()) {
-			Edge e = itr.next();
-			Vertex[] ev = endVertices(e);
-			if ((ev[0] == v) || (ev[1] == v)) {
-				ea.add(e);
-			}
-		}
-		
-		return ea.iterator();
+		return v.incidentEdges();
 	}
 	
 	public Vertex[] endVertices(Edge e) {
@@ -197,8 +187,36 @@ public class DirectedGraph {
 		}
 	}
 	
-	public void dfs() {
+	public void dfsPrep(Vertex v) {
+		Iterator<Vertex> itr = vertices.iterator();
+		while (itr.hasNext()) {
+			Vertex u = itr.next();
+			u.setAnnotation("explored", false);
+		}
 		
+		dfs(v);
+	}
+	
+	public void dfs(Vertex v) {
+		// label v as explored
+		v.setAnnotation("explored", true);
+		Iterator<Edge> itr = v.incidentEdges();
+		// for all edges e in G.incidentEdges(v) do
+		while (itr.hasNext()) {
+			Edge e = itr.next();
+			// if edge e is unexplored
+			if (e.getAnnotation("explored").equals(false)) {
+				try {
+					Vertex w = opposite(v, e);
+					
+				} catch(Exception e1) {
+					// TODO: Something.
+					e1.printStackTrace();
+				}
+			} else {
+				e.setAnnotation("kind", "back");
+			}
+		}
 	}
 	
 	public void scc() {

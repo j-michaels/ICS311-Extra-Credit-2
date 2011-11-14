@@ -1,9 +1,12 @@
 package ics311;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Edge {
 	private Vertex u;
 	private Vertex v;
-	private Object annotation;
+	private Map<Object,Object> annotations;
 	private boolean directed;
 	
 	public Edge(Vertex u, Vertex v, Object info, boolean d) {
@@ -11,7 +14,7 @@ public class Edge {
 		this.v = v;
 		u.insertAdjacentEdge(this);
 		v.insertAdjacentEdge(this);
-		annotation = info;
+		annotations = new HashMap<Object,Object>();
 		this.directed = d;
 	}
 	
@@ -46,6 +49,14 @@ public class Edge {
 	public void setOrigin(Vertex newOrigin) {
 		setDirected(true);
 		v = newOrigin;
+	}
+
+	public Object getAnnotation(Object k) {
+		return annotations.get(k);
+	}
+
+	public void setAnnotation(Object k, Object v) {
+		annotations.put(k, v);
 	}
 
 }

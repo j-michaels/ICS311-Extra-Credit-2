@@ -2,6 +2,7 @@ package ics311;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -9,13 +10,18 @@ public class Vertex {
 	Object data;
 	Map<Object,Object> annotations;
 	
-	ArrayList<Edge> adjacentEdges;
+	ArrayList<Edge> incidentEdges;
 	
 	public Vertex(Object data) {
 		this.data = data;
+		annotations = new HashMap<Object,Object>();
 	}
 	
 	// Accessors
+	
+	public int degree() {
+		return incidentEdges.size();
+	}
 	
 	public int inDegree() {
 		return inAdjacentVerticesArray().size();
@@ -30,14 +36,14 @@ public class Vertex {
 	}
 	
 	private ArrayList<Vertex> inAdjacentVerticesArray() {
-		Iterator<Edge> itr = adjacentEdges.iterator();
+		Iterator<Edge> itr = incidentEdges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		
 		while (itr.hasNext()) {
 			// TODO: Clean this up.
 			Edge e = itr.next();
 			Vertex[] ev = e.endVertices();
-			if ((ev[1] == this) && (ev[0] != this) && (e.isDirected())) {
+			if ((ev[1] == this) && (e.isDirected())) {
 				va.add(ev[0]);
 			}
 		}
@@ -51,14 +57,14 @@ public class Vertex {
 	}
 	
 	private ArrayList<Vertex> outAdjacentVerticesArray() {
-		Iterator<Edge> itr = adjacentEdges.iterator();
+		Iterator<Edge> itr = incidentEdges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		
 		while (itr.hasNext()) {
 			// TODO: Clean this up.
 			Edge e = itr.next();
 			Vertex[] ev = e.endVertices();
-			if ((ev[0] == this) && (ev[1] != this) && (e.isDirected())) {
+			if ((ev[0] == this) && (e.isDirected())) {
 				va.add(ev[0]);
 			}
 		}
@@ -69,8 +75,7 @@ public class Vertex {
 	// Mutators
 	
 	public void insertAdjacentEdge(Edge edge) {
-		// TODO Auto-generated method stub
-		adjacentEdges.add(edge);
+		incidentEdges.add(edge);
 	}
 	
 	// Annotators
@@ -91,7 +96,6 @@ public class Vertex {
 	// ADJACENT vertices ONLY. It does not delete these edges from the
 	// graph or itself from the graph.
 	public void removeSelf() {
-		// TODO Auto-generated method stub
 		Iterator<Vertex> itr = adjacentVertices();
 		
 		while (itr.hasNext()) {
@@ -102,8 +106,7 @@ public class Vertex {
 
 	// Deletes all edges associated with vertex v
 	public void removeEdgesWith(Vertex v) {
-		// TODO Auto-generated method stub
-		Iterator<Edge> itr = adjacentEdges.iterator();
+		Iterator<Edge> itr = incidentEdges.iterator();
 		while (itr.hasNext()) {
 			Edge e = itr.next();
 			Vertex[] va = e.endVertices();
@@ -115,7 +118,7 @@ public class Vertex {
 
 	public void removeEdge(Edge e) {
 		// TODO Auto-generated method stub
-		adjacentEdges.remove(e);
+		incidentEdges.remove(e);
 	}
 
 	public Iterator<Vertex> adjacentVertices() {
@@ -123,20 +126,26 @@ public class Vertex {
 		return adjacentVerticesArray().iterator();
 	}
 
+	// Returns an ArrayList of all adjacent vertices, including itself
 	private ArrayList<Vertex> adjacentVerticesArray() {
-		Iterator<Edge> itr = adjacentEdges.iterator();
+		Iterator<Edge> itr = incidentEdges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		
 		while (itr.hasNext()) {
 			// TODO: Clean this up.
 			Edge e = itr.next();
 			Vertex[] ev = e.endVertices();
-			if (((ev[0] == this) && (ev[1] != this)) ||
-				((ev[1] == this) && (ev[0] != this))) {
+			if (ev[0] == this) {
+				va.add(ev[1]);
+			} else if (ev[1] == this) {
 				va.add(ev[0]);
 			}
 		}
 		
 		return va;
+	}
+
+	public Iterator<Edge> incidentEdges() {
+		return incidentEdges.iterator();
 	}
  }
