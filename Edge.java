@@ -44,7 +44,6 @@ public class Edge {
 	}
 
 	public void setOrigin(Vertex newOrigin) {
-		// TODO Auto-generated method stub
 		setDirected(true);
 		v = newOrigin;
 	}

@@ -122,49 +122,19 @@ public class DirectedGraph {
 	}
 	
 	public int inDegree(Vertex v) {
-		return inAdjacentVerticesArray(v).size();
+		return v.inDegree();
 	}
 	
 	public int outDegree(Vertex v) {
-		return outAdjacentVerticesArray(v).size();
-	}
-	
-	public ArrayList<Vertex> inAdjacentVerticesArray(Vertex v) {
-		Iterator<Edge> itr = edges.iterator();
-		ArrayList<Vertex> va = new ArrayList<Vertex>();
-		
-		while (itr.hasNext()) {
-			Edge e = itr.next();
-			Vertex[] ev = endVertices(e);
-			if ((ev[1] == v) && (ev[0] != v)) {
-				va.add(ev[0]);
-			}
-		}
-		
-		return va;
+		return v.outDegree();
 	}
 	
 	public Iterator<Vertex> inAdjacentVertices(Vertex v) {
-		return inAdjacentVerticesArray(v).iterator();
-	}
-	
-	public ArrayList<Vertex> outAdjacentVerticesArray(Vertex v) {
-		Iterator<Edge> itr = edges.iterator();
-		ArrayList<Vertex> va = new ArrayList<Vertex>();
-		
-		while (itr.hasNext()) {
-			Edge e = itr.next();
-			Vertex[] ev = endVertices(e);
-			if ((ev[0] == v) && (ev[1] != v)) {
-				va.add(ev[1]);
-			}
-		}
-		
-		return va;
+		return v.inAdjacentVertices();
 	}
 	
 	public Iterator<Vertex> outAdjacentVertices(Vertex v) {
-		return outAdjacentVerticesArray(v).iterator();
+		return v.inAdjacentVertices();
 	}
 	
 	// Mutators
@@ -189,6 +159,7 @@ public class DirectedGraph {
 	
 	public Object removeVertex(Vertex v) {
 		vertices.remove(v);
+		v.removeSelf();
 		// TODO: remove each edge on v and remove associated edges on other v's
 		
 		return v;
@@ -196,6 +167,9 @@ public class DirectedGraph {
 	
 	public Object removeEdge(Edge e) {
 		edges.remove(e);
+		Vertex[] va = e.endVertices();
+		va[0].removeSelf();
+		va[1].removeSelf();
 		// TODO: Same as above.
 		
 		return e;
