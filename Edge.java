@@ -59,4 +59,11 @@ public class Edge {
 		annotations.put(k, v);
 	}
 
+	public void reverse() {
+		// TODO Auto-generated method stub
+		Vertex tu = u;
+		u = v;
+		v = tu;
+	}
+
 }

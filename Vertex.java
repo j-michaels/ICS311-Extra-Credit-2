@@ -1,6 +1,5 @@
 package ics311;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,16 +7,26 @@ import java.util.Map;
 
 public class Vertex {
 	Object data;
-	Map<Object,Object> annotations;
+	private Map<Object,Object> annotations;
+	private int id;
 	
 	ArrayList<Edge> incidentEdges;
 	
 	public Vertex(Object data) {
+		incidentEdges = new ArrayList<Edge>();
 		this.data = data;
 		annotations = new HashMap<Object,Object>();
 	}
 	
 	// Accessors
+	
+	public int id() {
+		return id;
+	}
+	
+	public void setid(int i) {
+		id = i;
+	}
 	
 	public int degree() {
 		return incidentEdges.size();
@@ -65,7 +74,7 @@ public class Vertex {
 			Edge e = itr.next();
 			Vertex[] ev = e.endVertices();
 			if ((ev[0] == this) && (e.isDirected())) {
-				va.add(ev[0]);
+				va.add(ev[1]);
 			}
 		}
 		

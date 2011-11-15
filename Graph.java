@@ -1,15 +1,70 @@
 package ics311;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 public class Graph {
+	boolean[][] AdjacencyMatrix;
 	ArrayList<Edge> edges;
 	ArrayList<Vertex> vertices;
+	ArrayList<Vertex> dfsArray;
 	int time;
 	
 	public Graph() {
+		edges = new ArrayList<Edge>();
+		vertices = new ArrayList<Vertex>();
 		time = 0;
+	}
+	
+	public void readFromFile() {
+		FileReader reader;
+		
+		try {
+			reader = new FileReader("inputfile");
+			BufferedReader br = new BufferedReader(reader);
+			String nextLine;
+			String mode = "";
+			int i = 0;
+			while ((nextLine = br.readLine()) != null) {
+				String[] lines = nextLine.split(" ");
+				i++;
+				if (lines[0].equals("*Vertices")) {
+					mode = "vertices";
+				} else if (lines[0].equals("*Arcs")) {
+					mode = "arcs";
+				} else {
+					if (mode.equals("vertices")) {
+						Vertex v = new Vertex(lines[0]);
+						v.setid(i-1);
+						vertices.add(v);
+					} else if (mode.equals("arcs")) {
+						//System.out.print("Line: ");
+						//System.out.println(nextLine);
+						
+						Vertex v1 = vertices.get(Integer.parseInt(lines[0])-1);
+						Vertex v2 = vertices.get(Integer.parseInt(lines[1])-1);
+						//System.out.println("v1: "+ v1.id() + ", v2: " + v2.id());
+						boolean d = false;
+						if (Float.parseFloat(lines[2]) == 1.0) {
+							d = true;
+						}
+						
+						Edge e = new Edge(v1, v2, null, d);
+						edges.add(e);
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int numVertices() {
@@ -194,6 +249,7 @@ public class Graph {
 	}
 	
 	public void dfsPrep(Vertex v) {
+		dfsArray = new ArrayList<Vertex>();
 		Iterator<Vertex> itr = vertices.iterator();
 		while (itr.hasNext()) {
 			Vertex u = itr.next();
@@ -240,12 +296,74 @@ public class Graph {
 		return va;
 	}
 	
-	public void dfs(Vertex v) {
-		
+	public void dfs(Vertex u) {
+		time = time + 1;
+		u.setAnnotation("d", time);
+		u.setAnnotation("color", "gray");
+		System.out.println("Runnign dfs on " + u.id() + ", out degree: " + u.outDegree());
+		Iterator<Vertex> itr = u.outAdjacentVertices();
+		while (itr.hasNext()) {
+			
+			Vertex v = itr.next();
+			
+			System.out.println("Foo: " + v.id());
+			if (v.getAnnotation("color").equals("white")) {
+				System.out.println("Setting "+u.id()+ "'s child " + v.id() + " to have pi=u.id");
+				v.setAnnotation("pi", u);
+				dfs(v);
+			}
+		}
+		u.setAnnotation("color", "black");
+		time = time + 1;
+		u.setAnnotation("finish", time);
+		dfsArray.add(u);
+		// add to finishing array?
 	}
 	
-	public void scc() {
+	public ArrayList<ArrayList<Vertex>> scc() {
 		Vertex v = vertices.get(0);
 		
+		dfsPrep(v);
+		Iterator<Edge> itr = edges.iterator();
+		while (itr.hasNext()) {
+			Edge e = itr.next();
+			e.reverse();
+		}
+		return null;
+		
+	}
+
+	public void printEdges() {
+		// TODO Auto-generated method stub
+		Iterator<Edge> itr=edges.iterator();
+		while (itr.hasNext()) {
+			Edge e = itr.next();
+			Vertex[] va = e.endVertices();
+			System.out.println("Edge: " + va[0].id() + ", " + va[1].id());
+		}
+	}
+	
+	public void printLargest() {
+		//Collections.sort(vertices, new Comparator());
+	}
+
+	public void printVertices() {
+		// TODO Auto-generated method stub
+		System.out.println("Time: "+time);
+		Iterator<Vertex> itr = vertices.iterator();
+		while (itr.hasNext()) {
+			Vertex v = itr.next();
+			Vertex pi = (Vertex)v.getAnnotation("pi");
+			int pi_id = 0;
+			if (pi != null) {
+				pi_id = pi.id();
+			}
+			System.out.println("Vertex " + v.id() + ": color: " + "; time: " + v.getAnnotation("d") + ";finish: " + v.getAnnotation("finish") + "; id: " + v.getAnnotation("color") + "; pi: "+ pi_id);
+		}
+		Iterator<Vertex> itr2 = dfsArray.iterator();
+		while (itr2.hasNext()) {
+			System.out.print(itr2.next().id()+" ");
+		}
+		System.out.println(" fin.");
 	}
 }
