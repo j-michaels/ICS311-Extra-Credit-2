@@ -1,6 +1,15 @@
 Testing Document
 
+I tested with smaller data sets that I was able to compute the SCC for
+by hand, and the results my program gave were correct. However, due to
+the immense size and complexity of these test graphs, it is too time
+consuming to verify their accuracy.
 
+One thing I noticed and worried about is that the average for in and out
+degrees is the same for every test. After considering it, I realized it
+must be this way, because when computing the average, each directed edge
+is in fact counted twice -- once for each of the endpoints. Thus, the
+average of all vertices will end up being the same.
 
 ------------------------------------------------------------
 Graph karate

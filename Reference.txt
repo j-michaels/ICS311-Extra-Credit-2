@@ -1,0 +1,51 @@
+Reference.txt
+
+	In my implementation, I chose to give the Vertex class an ArrayList field
+for storing incident edges. Because of this design, the asymptotic growth of
+many functions are related to the sparseness of the graph -- that is, the
+average number of incident edges any given vertex has.
+	It would not be correct to say that this is still O(n) or anything based
+on n, because the sparseness of a graph is not associated with n at all.
+	There is probably a typical variable used for talking about the growth
+of sparseness, but I am unaware of it, so I will use the variable s.
+	Example: this function is O(s^2)
+		means exponential growth of the function as sparseness increases linearly  
+
+
+Asymptotic analysis of the Graph class:
+
+Accessor methods
+
+numVertices(), numEdges(), vertices(), edges()
+	all constant time O(1), they just return a value
+
+Accessing Undirected Graphs
+
+degree(Vertex v), adjacentVertices(Vertex v)
+	iterates through all adjacent vertices to v which is O(s)
+	
+	
+incidentEdges(Vertex v)
+	returns a reference, so it is O(1)
+	
+endVertices(), opposite(), destination(v), origin(v), isDirected(v)
+	constant time O(1)
+	
+areAdjacent(v1, v2), inDegree(v), outDegree(v), inAdjacentVertices(v),
+	outAdjacentVertices(v), inIncidentEdges(v), outIncidentEdges(v)
+	all O(s) time
+	
+insertEdge(), insertVertex(), insertDirectedEdge()
+	O(s) I think, it depends on ArrayList's insert
+	
+removeVertex(), removeEdge()
+	O(n) because it has to remove them from the main ArrayList
+	probably a way to make this more efficient
+
+setDirectionFrom(), setDirectionTo, makeUndirected(), reverseDirection(),
+setAnnotation()
+	all constant time
+	
+getAnnotation(), removeAnnotation()
+	depends on the implementation of HashMap but I think these are probably
+	constant time

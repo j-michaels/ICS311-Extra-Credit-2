@@ -126,17 +126,15 @@ public class Vertex {
 	}
 
 	public void removeEdge(Edge e) {
-		// TODO Auto-generated method stub
 		incidentEdges.remove(e);
 	}
 
 	public Iterator<Vertex> adjacentVertices() {
-		// TODO Auto-generated method stub
 		return adjacentVerticesArray().iterator();
 	}
 
 	// Returns an ArrayList of all adjacent vertices, including itself
-	private ArrayList<Vertex> adjacentVerticesArray() {
+	public ArrayList<Vertex> adjacentVerticesArray() {
 		Iterator<Edge> itr = incidentEdges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		
@@ -156,5 +154,35 @@ public class Vertex {
 
 	public Iterator<Edge> incidentEdges() {
 		return incidentEdges.iterator();
+	}
+
+	public Iterator<Edge> inIncidentEdges() {
+		Iterator<Edge> itr = incidentEdges.iterator();
+		ArrayList<Edge> va = new ArrayList<Edge>();
+		
+		while (itr.hasNext()) {
+			Edge e = itr.next();
+			Vertex[] ev = e.endVertices();
+			if ((ev[1] == this) && (e.isDirected())) {
+				va.add(e);
+			}
+		}
+		
+		return va.iterator();
+	}
+
+	public Iterator<Edge> outIncidentEdges() {
+		Iterator<Edge> itr = incidentEdges.iterator();
+		ArrayList<Edge> va = new ArrayList<Edge>();
+		
+		while (itr.hasNext()) {
+			Edge e = itr.next();
+			Vertex[] ev = e.endVertices();
+			if ((ev[0] == this) && (e.isDirected())) {
+				va.add(e);
+			}
+		}
+		
+		return va.iterator();
 	}
  }

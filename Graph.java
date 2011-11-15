@@ -96,9 +96,10 @@ public class Graph {
 	// Undirected Graph accessors
 	
 	public int degree(Vertex v) {
-		return adjacentVerticesArray(v).size();
+		return v.degree();
 	}
-
+	
+	// Unused ... I think
 	public ArrayList<Vertex> adjacentVerticesArray(Vertex v) {
 		Iterator<Edge> itr = edges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
@@ -124,11 +125,16 @@ public class Graph {
 		return v.incidentEdges();
 	}
 	
+	public Iterator<Edge> inIncidentEdges(Vertex v) {
+		return v.inIncidentEdges();
+	}
+	
+	public Iterator<Edge> outAdjacentEdges(Vertex v) {
+		return v.outIncidentEdges();
+	}
+	
 	public Vertex[] endVertices(Edge e) {
-		Vertex[] va = new Vertex[2];
-		va[0] = e.destination();
-		va[1] = e.origin();
-		return va;
+		return e.endVertices();
 	}
 	
 	public Vertex opposite(Vertex v, Edge e) throws InvalidEdgeException {
