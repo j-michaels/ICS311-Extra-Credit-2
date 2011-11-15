@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -17,14 +16,23 @@ public class Graph {
 	ArrayList<Vertex> dfsArray;
 	int time;
 	private ArrayList<ArrayList<Vertex>> sccArray;
+	private String fileName;
+	private int minInDegree;
+	private int minOutDegree;
+	private double avgInDegree;
+	private double avgOutDegree;
+	private int maxInDegree;
+	private int maxOutDegree;
 	
 	public Graph() {
 		edges = new ArrayList<Edge>();
 		vertices = new ArrayList<Vertex>();
 		time = 0;
+		fileName = "";
 	}
 	
-	public void readFromFile() {
+	public void readFromFile(String fileName) {
+		this.fileName = fileName;  
 		FileReader reader;
 		
 		try {
@@ -258,6 +266,7 @@ public class Graph {
 		while (itr.hasNext()) {
 			Vertex u = itr.next();
 			u.setAnnotation("color", "white");
+			u.setAnnotation("root", false);
 			u.setAnnotation("pi", null);
 		}
 		time = 0;
@@ -273,16 +282,22 @@ public class Graph {
 		} else {
 			// traverse the stack in reverse order
 			while (stack.isEmpty() != true) {
-				System.out.print("Popping off ");
+				
+				//System.out.print("Popping off ");
 				Vertex u = stack.pop();
-				System.out.println(u.id());
+				u.setAnnotation("root", true);
+				
+				//System.out.println(u.id());
 				ArrayList<Vertex> allVerts = dfs(u);
 				Iterator<Vertex> it = allVerts.iterator();
-				System.out.print("DFS on that returns: ");
+				
+				//System.out.print("DFS on that returns: ");
 				while (it.hasNext()) {
 					System.out.print(it.next().id() + " ");
 				}
-				System.out.println();
+				DescendingComparator compr = new DescendingComparator();
+				Collections.sort(allVerts, compr);
+				//System.out.println();
 				sccArray.add(allVerts);
 				// remove all the vertices discovered by DFS
 				stack.removeAll(allVerts);
@@ -297,39 +312,9 @@ public class Graph {
 			
 		}
 		System.out.println();
-	}
-	
-	public ArrayList<Vertex> dfs_old(Vertex v) {
-		ArrayList<Vertex> va = new ArrayList<Vertex>();
-		// label v as explored
-		v.setAnnotation("explored", true);
-		Iterator<Edge> itr = v.incidentEdges();
-		// for all edges e in G.incidentEdges(v) do
-		while (itr.hasNext()) {
-			Edge e = itr.next();
-			// if edge e is unexplored
-			if (e.getAnnotation("explored").equals(false)) {
-				try {
-					Vertex w = opposite(v, e);
-					// if vertex w is unexplored
-					if (w.getAnnotation("explored").equals(false)) {
-						e.setAnnotation("kind", "discovery");
-						dfs(w);
-					}
-				} catch(Exception e1) {
-					// TODO: Something.
-					e1.printStackTrace();
-				}
-			} else {
-				e.setAnnotation("kind", "back");
-				// I think this is where it needs to be added to va
-			}
-		}
-		
-		return va;
-	}
-	
+	}	
 
+	
 	public ArrayList<Vertex> dfs(Vertex u) {
 		ArrayList<Vertex> allVerts = new ArrayList<Vertex>();
 		time = time + 1;
@@ -400,11 +385,8 @@ public class Graph {
 			System.out.println("Edge: " + va[0].id() + ", " + va[1].id());
 		}
 	}
-	
-	public void printLargest() {
-		//Collections.sort(vertices, new Comparator());
-	}
 
+	// print for debugging
 	public void printVertices() {
 		// TODO Auto-generated method stub
 		System.out.println("Time: "+time);
@@ -420,14 +402,99 @@ public class Graph {
 		}
 		Iterator<ArrayList<Vertex>> itr2 = sccArray.iterator();
 		while (itr2.hasNext()) {
-			ArrayList<Vertex> va = itr2.next();
+			ArrayList<Vertex> va = itr2.next(); // this represents a single connected comp.
+			// sort it!
+			DescendingComparator compr = new DescendingComparator();
+			Collections.sort(va, compr);
 			Iterator<Vertex> itr3 = va.iterator();
 			System.out.print("{");
 			while (itr3.hasNext()) {
-				System.out.print(itr3.next().id() + " ");
+				Vertex x = itr3.next();
+				System.out.print(x.id() + ":" + x.degree() + " ");
 			}
 			System.out.print("}, ");
 		}
 		System.out.println(" fin.");
+		
+		
+	}
+	
+	public void finalPrint() {
+		
+		System.out.println("------------------------------------------------------------");
+		System.out.println("Graph " + fileName);
+		System.out.println("------------------------------------------------------------");
+		System.out.println("|V| = " + vertices.size());
+		System.out.println("|E| = " + edges.size());
+		System.out.println("Degree distribution:	minimum		average		max");
+		System.out.println("inDegree(v)		" + minInDegree + "		" + avgInDegree + "		" + maxInDegree);
+		System.out.println("outDegree(v)		" + minOutDegree + "		" + avgOutDegree + "		" + maxOutDegree);
+		
+		System.out.println("Number of Strongly Connected Components: " + sccArray.size());
+		System.out.println("Top 20 SCC by size:");
+		System.out.println("ID	Root	Highest Degree Vertices");
+		DoubleDescendingComparator compr = new DoubleDescendingComparator();
+		Collections.sort(sccArray, compr);
+		Iterator<ArrayList<Vertex>> itr = sccArray.iterator();
+		for (int i = 0; itr.hasNext() && i <= 20; i++) {
+			ArrayList<Vertex> av = itr.next();
+			Vertex v = av.get(0);
+			Vertex r = findRoot(av);
+			String rid = "null";
+			if (r != null) {
+				rid = String.valueOf(r.id());
+			}
+			System.out.println(i + "	" + rid + "		deg(" + v.id() + ") = " + v.degree());
+		}
+		
+	}
+	
+	private Vertex findRoot(ArrayList<Vertex> av) {
+		// TODO Auto-generated method stub
+		Iterator<Vertex> itr = av.iterator();
+		while (itr.hasNext()) {
+			Vertex v = itr.next();
+			if (v.getAnnotation("root").equals(true)) return v;
+		}
+		return null;
+	}
+
+	// arraylist doesn't have these basic functions built in + no anonymous functions
+	// = unhappy programmers
+	public void calcMinsMaxAvg() {
+		// TODO Auto-generated method stub
+		Iterator<Vertex> itr = vertices.iterator();
+		int minIn = -1;
+		int minOut = -1;
+		int maxIn = 0;
+		int maxOut = 0;
+		int sumIn = 0;
+		int sumOut = 0;
+		
+		while (itr.hasNext()) {
+			Vertex v = itr.next();
+			
+			if ((v.inDegree() < minIn) || (minIn == -1)) {
+				minIn = v.inDegree();
+			}
+			if ((v.outDegree() < minOut) || (minOut == -1)) {
+				minOut = v.outDegree();
+			}
+			if (v.inDegree() > maxIn) {
+				maxIn = v.inDegree();
+			}
+			if (v.outDegree() > maxOut) {
+				maxOut = v.outDegree();
+			}
+			sumIn += v.inDegree();
+			sumOut += v.outDegree();
+		}
+		
+		minInDegree = minIn;
+		minOutDegree = minOut;
+		maxInDegree = maxIn;
+		maxOutDegree = maxOut;
+		avgInDegree = (double)sumIn / vertices.size();
+		avgOutDegree = (double)sumOut / vertices.size();
 	}
 }

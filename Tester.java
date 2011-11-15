@@ -1,20 +1,22 @@
 package ics311;
 
-import java.util.ArrayList;
-
 public class Tester {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+        if (args.length < 1) {
+            System.out.println("Usage: java Tester filename");
+            System.out.println("Where filename is the data file to be read.");
+            System.exit(1);
+        }
 		Graph g = new Graph();
-		g.readFromFile();
-		//g.printEdges();
-		//g.dfsPrep(null);
-		ArrayList<ArrayList<Vertex>> sccarr = g.scc();
-		g.printVertices();
+		g.readFromFile(args[0]);
+		g.calcMinsMaxAvg();
+		g.scc();
+		//g.printVertices();
+		g.finalPrint();
 	}
 
 }
