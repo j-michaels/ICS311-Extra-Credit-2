@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class Graph {
 	boolean[][] AdjacencyMatrix;
@@ -15,6 +16,7 @@ public class Graph {
 	ArrayList<Vertex> vertices;
 	ArrayList<Vertex> dfsArray;
 	int time;
+	private ArrayList<ArrayList<Vertex>> sccArray;
 	
 	public Graph() {
 		edges = new ArrayList<Edge>();
@@ -248,8 +250,10 @@ public class Graph {
 		}
 	}
 	
-	public void dfsPrep(Vertex v) {
+	public void dfsPrep(Stack<Vertex> stack) {
 		dfsArray = new ArrayList<Vertex>();
+		sccArray = new ArrayList<ArrayList<Vertex>>();
+		
 		Iterator<Vertex> itr = vertices.iterator();
 		while (itr.hasNext()) {
 			Vertex u = itr.next();
@@ -257,13 +261,42 @@ public class Graph {
 			u.setAnnotation("pi", null);
 		}
 		time = 0;
-		itr = vertices.iterator();
-		while (itr.hasNext()) {
-			Vertex u = itr.next();
-			if (u.getAnnotation("color").equals("white")) {
-				dfs(u);
+		
+		if (stack == null) {
+			itr = vertices.iterator();
+			while (itr.hasNext()) {
+				Vertex u = itr.next();
+				if (u.getAnnotation("color").equals("white")) {
+					dfsArray.addAll(dfs(u));
+				}
+			}
+		} else {
+			// traverse the stack in reverse order
+			while (stack.isEmpty() != true) {
+				System.out.print("Popping off ");
+				Vertex u = stack.pop();
+				System.out.println(u.id());
+				ArrayList<Vertex> allVerts = dfs(u);
+				Iterator<Vertex> it = allVerts.iterator();
+				System.out.print("DFS on that returns: ");
+				while (it.hasNext()) {
+					System.out.print(it.next().id() + " ");
+				}
+				System.out.println();
+				sccArray.add(allVerts);
+				// remove all the vertices discovered by DFS
+				stack.removeAll(allVerts);
 			}
 		}
+	}
+	
+	public void printVertices(ArrayList<Vertex> av) {
+		Iterator<Vertex> itr = av.iterator();
+		while (itr.hasNext()) {
+			System.out.print(itr.next().id() + " ");
+			
+		}
+		System.out.println();
 	}
 	
 	public ArrayList<Vertex> dfs_old(Vertex v) {
@@ -296,41 +329,66 @@ public class Graph {
 		return va;
 	}
 	
-	public void dfs(Vertex u) {
+
+	public ArrayList<Vertex> dfs(Vertex u) {
+		ArrayList<Vertex> allVerts = new ArrayList<Vertex>();
 		time = time + 1;
 		u.setAnnotation("d", time);
 		u.setAnnotation("color", "gray");
-		System.out.println("Runnign dfs on " + u.id() + ", out degree: " + u.outDegree());
+		System.out.println("Running dfs on " + u.id() + ", out degree: " + u.outDegree());
+		//System.out.print("outbound vertices for " + u.id() + ": ");
+		//printVertices(u.outAdjacentVerticesArray());
+		
 		Iterator<Vertex> itr = u.outAdjacentVertices();
 		while (itr.hasNext()) {
 			
+			
 			Vertex v = itr.next();
 			
-			System.out.println("Foo: " + v.id());
+			//System.out.println("Foo: " + v.id() + "; color: " + v.getAnnotation("color"));
 			if (v.getAnnotation("color").equals("white")) {
-				System.out.println("Setting "+u.id()+ "'s child " + v.id() + " to have pi=u.id");
+				//System.out.println("Setting "+u.id()+ "'s child " + v.id() + " to have pi=u.id");
 				v.setAnnotation("pi", u);
-				dfs(v);
+				allVerts.addAll(dfs(v));
 			}
 		}
 		u.setAnnotation("color", "black");
 		time = time + 1;
 		u.setAnnotation("finish", time);
-		dfsArray.add(u);
-		// add to finishing array?
+		allVerts.add(u);
+		
+		return allVerts;
 	}
 	
 	public ArrayList<ArrayList<Vertex>> scc() {
-		Vertex v = vertices.get(0);
+		// Run first pass of DFS
+		System.out.println("First pass of DFS.");
+		dfsPrep(null);
 		
-		dfsPrep(v);
-		Iterator<Edge> itr = edges.iterator();
+		// Make a stack based on the reverse output of the DFS algorithm.
+		System.out.print("dfsArray output: ");
+		Stack<Vertex> s = new Stack<Vertex>();
+		Iterator<Vertex> itr = dfsArray.iterator();
 		while (itr.hasNext()) {
-			Edge e = itr.next();
+			Vertex v = itr.next();
+			System.out.print(v.id() + " ");
+			s.add(v);
+		}
+		System.out.println();
+		
+		// Reverse all the edges in the graph.
+		System.out.println("Reversing all the edges in the graph.");
+		Iterator<Edge> itr2 = edges.iterator();
+		while (itr2.hasNext()) {
+			Edge e = itr2.next();
 			e.reverse();
 		}
-		return null;
 		
+		// Run DFS again with the stack to follow as a guide.
+		System.out.println("Second pass of DFS.");
+		dfsPrep(s);
+		
+		return sccArray;
 	}
 
 	public void printEdges() {
@@ -358,11 +416,17 @@ public class Graph {
 			if (pi != null) {
 				pi_id = pi.id();
 			}
-			System.out.println("Vertex " + v.id() + ": color: " + "; time: " + v.getAnnotation("d") + ";finish: " + v.getAnnotation("finish") + "; id: " + v.getAnnotation("color") + "; pi: "+ pi_id);
+			System.out.println("Vertex " + v.id() + ": color: " + "; time: " + v.getAnnotation("d") + "; finish: " + v.getAnnotation("finish") + "; id: " + v.getAnnotation("color") + "; pi: "+ pi_id);
 		}
-		Iterator<Vertex> itr2 = dfsArray.iterator();
+		Iterator<ArrayList<Vertex>> itr2 = sccArray.iterator();
 		while (itr2.hasNext()) {
-			System.out.print(itr2.next().id()+" ");
+			ArrayList<Vertex> va = itr2.next();
+			Iterator<Vertex> itr3 = va.iterator();
+			System.out.print("{");
+			while (itr3.hasNext()) {
+				System.out.print(itr3.next().id() + " ");
+			}
+			System.out.print("}, ");
 		}
 		System.out.println(" fin.");
 	}

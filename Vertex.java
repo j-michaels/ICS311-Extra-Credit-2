@@ -65,7 +65,7 @@ public class Vertex {
 		return outAdjacentVerticesArray().iterator();
 	}
 	
-	private ArrayList<Vertex> outAdjacentVerticesArray() {
+	public ArrayList<Vertex> outAdjacentVerticesArray() {
 		Iterator<Edge> itr = incidentEdges.iterator();
 		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		

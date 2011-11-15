@@ -1,5 +1,7 @@
 package ics311;
 
+import java.util.ArrayList;
+
 public class Tester {
 
 	/**
@@ -10,7 +12,8 @@ public class Tester {
 		Graph g = new Graph();
 		g.readFromFile();
 		//g.printEdges();
-		g.dfsPrep(g.vertices.get(0));
+		//g.dfsPrep(null);
+		ArrayList<ArrayList<Vertex>> sccarr = g.scc();
 		g.printVertices();
 	}
 
