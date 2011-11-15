@@ -3,9 +3,14 @@ package ics311;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class DirectedGraph {
+public class Graph {
 	ArrayList<Edge> edges;
 	ArrayList<Vertex> vertices;
+	int time;
+	
+	public Graph() {
+		time = 0;
+	}
 	
 	public int numVertices() {
 		return vertices.size();
@@ -72,7 +77,7 @@ public class DirectedGraph {
 	}
 	
 	public boolean areAdjacent(Vertex v1, Vertex v2) {
-		Iterator<Edge> itr = edges.iterator();
+		Iterator<Edge> itr = v1.incidentEdges();
 		
 		while (itr.hasNext()) {
 			Vertex[] va = endVertices(itr.next());
@@ -83,6 +88,7 @@ public class DirectedGraph {
 		
 		return false;
 	}
+	
 	
 	// Directed Graph Accessors
 	public Iterator<Edge> directedEdges() {
@@ -191,13 +197,21 @@ public class DirectedGraph {
 		Iterator<Vertex> itr = vertices.iterator();
 		while (itr.hasNext()) {
 			Vertex u = itr.next();
-			u.setAnnotation("explored", false);
+			u.setAnnotation("color", "white");
+			u.setAnnotation("pi", null);
 		}
-		
-		dfs(v);
+		time = 0;
+		itr = vertices.iterator();
+		while (itr.hasNext()) {
+			Vertex u = itr.next();
+			if (u.getAnnotation("color").equals("white")) {
+				dfs(u);
+			}
+		}
 	}
 	
-	public void dfs(Vertex v) {
+	public ArrayList<Vertex> dfs_old(Vertex v) {
+		ArrayList<Vertex> va = new ArrayList<Vertex>();
 		// label v as explored
 		v.setAnnotation("explored", true);
 		Iterator<Edge> itr = v.incidentEdges();
@@ -208,18 +222,30 @@ public class DirectedGraph {
 			if (e.getAnnotation("explored").equals(false)) {
 				try {
 					Vertex w = opposite(v, e);
-					
+					// if vertex w is unexplored
+					if (w.getAnnotation("explored").equals(false)) {
+						e.setAnnotation("kind", "discovery");
+						dfs(w);
+					}
 				} catch(Exception e1) {
 					// TODO: Something.
 					e1.printStackTrace();
 				}
 			} else {
 				e.setAnnotation("kind", "back");
+				// I think this is where it needs to be added to va
 			}
 		}
+		
+		return va;
+	}
+	
+	public void dfs(Vertex v) {
+		
 	}
 	
 	public void scc() {
+		Vertex v = vertices.get(0);
 		
 	}
 }
