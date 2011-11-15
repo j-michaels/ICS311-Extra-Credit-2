@@ -289,12 +289,14 @@ public class Graph {
 				
 				//System.out.println(u.id());
 				ArrayList<Vertex> allVerts = dfs(u);
-				Iterator<Vertex> it = allVerts.iterator();
+				//Iterator<Vertex> it = allVerts.iterator();
 				
 				//System.out.print("DFS on that returns: ");
-				while (it.hasNext()) {
-					System.out.print(it.next().id() + " ");
-				}
+				//while (it.hasNext()) {
+				//	System.out.print(it.next().id() + " ");
+				//}
+				
+				// Sort the array in descending order based on the degree
 				DescendingComparator compr = new DescendingComparator();
 				Collections.sort(allVerts, compr);
 				//System.out.println();
@@ -313,21 +315,19 @@ public class Graph {
 		}
 		System.out.println();
 	}	
-
 	
 	public ArrayList<Vertex> dfs(Vertex u) {
 		ArrayList<Vertex> allVerts = new ArrayList<Vertex>();
 		time = time + 1;
 		u.setAnnotation("d", time);
 		u.setAnnotation("color", "gray");
-		System.out.println("Running dfs on " + u.id() + ", out degree: " + u.outDegree());
+		
+		//System.out.println("Running dfs on " + u.id() + ", out degree: " + u.outDegree());
 		//System.out.print("outbound vertices for " + u.id() + ": ");
 		//printVertices(u.outAdjacentVerticesArray());
 		
 		Iterator<Vertex> itr = u.outAdjacentVertices();
 		while (itr.hasNext()) {
-			
-			
 			Vertex v = itr.next();
 			
 			//System.out.println("Foo: " + v.id() + "; color: " + v.getAnnotation("color"));
@@ -347,22 +347,22 @@ public class Graph {
 	
 	public ArrayList<ArrayList<Vertex>> scc() {
 		// Run first pass of DFS
-		System.out.println("First pass of DFS.");
+		//System.out.println("First pass of DFS.");
 		dfsPrep(null);
 		
 		// Make a stack based on the reverse output of the DFS algorithm.
-		System.out.print("dfsArray output: ");
+		//System.out.print("dfsArray output: ");
 		Stack<Vertex> s = new Stack<Vertex>();
 		Iterator<Vertex> itr = dfsArray.iterator();
 		while (itr.hasNext()) {
 			Vertex v = itr.next();
-			System.out.print(v.id() + " ");
+			//System.out.print(v.id() + " ");
 			s.add(v);
 		}
-		System.out.println();
+		//System.out.println();
 		
 		// Reverse all the edges in the graph.
-		System.out.println("Reversing all the edges in the graph.");
+		//System.out.println("Reversing all the edges in the graph.");
 		Iterator<Edge> itr2 = edges.iterator();
 		while (itr2.hasNext()) {
 			Edge e = itr2.next();
@@ -370,7 +370,7 @@ public class Graph {
 		}
 		
 		// Run DFS again with the stack to follow as a guide.
-		System.out.println("Second pass of DFS.");
+		//System.out.println("Second pass of DFS.");
 		dfsPrep(s);
 		
 		return sccArray;
