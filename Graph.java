@@ -464,6 +464,33 @@ public class Graph {
 		}
 		return null;
 	}
+	
+	public void dijkstra(Vertex s) {
+		// check that v is in vertices
+		if (vertices.contains(s)) {
+			Iterator<Vertex> itr = vertices.iterator();
+			
+			// Initialize all vertices to have infinite distance
+			while (itr.hasNext()) {
+				Vertex v = itr.next();
+				v.setAnnotation("dist", -1);
+				v.setAnnotation("previous",	null);
+			}
+			s.setAnnotation("dist", 0);
+			ArrayList<Vertex> q = (ArrayList<Vertex>) vertices.clone();
+			
+			itr = q.iterator();
+			
+			while(itr.hasNext()) {
+				Vertex u = minDistance(q);
+				Iterator<Edge> adj_itr = u.incidentEdges();
+				while (adj_itr.hasNext()) {
+					Edge e = adj_itr.next();
+					
+				}
+			}
+		}
+	}
 
 	// arraylist doesn't have these basic functions built in + no anonymous functions
 	// = unhappy programmers

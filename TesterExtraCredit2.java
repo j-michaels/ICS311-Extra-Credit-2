@@ -1,6 +1,6 @@
 package ics311;
 
-public class Tester {
+public class TesterExtraCredit2 {
 
 	/**
 	 * @param args
@@ -13,10 +13,10 @@ public class Tester {
         }
 		Graph g = new Graph();
 		g.readFromFile(args[0]);
-		g.calcMinsMaxAvg();
-		g.scc();
+		//g.calcMinsMaxAvg();
+		//g.scc();
 		//g.printVertices();
-		g.finalPrint();
+		//g.finalPrint();
 	}
 
 }
