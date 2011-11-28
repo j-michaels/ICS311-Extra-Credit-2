@@ -1,5 +1,7 @@
 package ics311;
 
+import java.util.Iterator;
+
 public class TesterExtraCredit2 {
 
 	/**
@@ -17,6 +19,21 @@ public class TesterExtraCredit2 {
 		//g.scc();
 		//g.printVertices();
 		//g.finalPrint();
+		
+		// Dijstra's Algorithm
+		Iterator<Vertex> itr = g.vertices();
+		//g.dijkstra(g.vertices.get(0));
+		while (itr.hasNext()) {
+			Vertex v = itr.next();
+			System.out.println("Running Dijstra's Algorithm on vertex" +v.id());
+			g.dijkstra(v);
+			System.out.println();
+		}
+		
+		// Iterated Bellman-Ford
+		
+		
+		// Johnson's Algorithm
 	}
 
 }

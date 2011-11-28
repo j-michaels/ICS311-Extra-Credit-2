@@ -9,6 +9,8 @@ public class Vertex {
 	Object data;
 	private Map<Object,Object> annotations;
 	private int id;
+	private float distance;
+	private Vertex previous;
 	
 	ArrayList<Edge> incidentEdges;
 	
@@ -16,9 +18,25 @@ public class Vertex {
 		incidentEdges = new ArrayList<Edge>();
 		this.data = data;
 		annotations = new HashMap<Object,Object>();
+		distance = 0;
 	}
 	
 	// Accessors
+	public Vertex getPrev() {
+		return this.previous;
+	}
+	
+	public void setPrev(Vertex prev) {
+		this.previous = prev;
+	}
+	
+	public float getDist() {
+		return this.distance;
+	}
+	
+	public void setDist(float dist) {
+		this.distance = dist;
+	}
 	
 	public int id() {
 		return id;

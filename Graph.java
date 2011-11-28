@@ -59,14 +59,19 @@ public class Graph {
 						
 						Vertex v1 = vertices.get(Integer.parseInt(lines[0])-1);
 						Vertex v2 = vertices.get(Integer.parseInt(lines[1])-1);
-						//System.out.println("v1: "+ v1.id() + ", v2: " + v2.id());
-						boolean d = false;
-						if (Float.parseFloat(lines[2]) == 1.0) {
-							d = true;
-						}
 						
-						Edge e = new Edge(v1, v2, null, d);
+						//System.out.println("v1: "+ v1.id() + ", v2: " + v2.id());
+						//boolean d = false;
+						//if (Float.parseFloat(lines[2]) == 1.0) {
+						//	d = true;
+						//}
+						//System.out.println("lines2: "+ lines[2]);
+						float w = Float.parseFloat(lines[2]);
+						//System.out.println("w: "+w);
+						
+						Edge e = new Edge(v1, v2, null, true, w); // assume edge is directed
 						edges.add(e);
+						//System.out.println("Edge " + e.origin().id() + "->" +e.destination().id() + ": " + e.getDist());
 					}
 				}
 			}
@@ -206,8 +211,8 @@ public class Graph {
 	
 	// Mutators
 	
-	public Edge insertEdge(Vertex u, Vertex v, Object info) {
-		Edge e = new Edge(u, v, info, false);
+	public Edge insertEdge(Vertex u, Vertex v, Object info, int weight) {
+		Edge e = new Edge(u, v, info, false, weight);
 		edges.add(e);
 		return e;
 	}
@@ -218,8 +223,8 @@ public class Graph {
 		return v;
 	}
 	
-	public Edge insertDirectedEdge(Vertex u, Vertex v, Object info) {
-		Edge e = new Edge(u, v, info, true);
+	public Edge insertDirectedEdge(Vertex u, Vertex v, Object info, int weight) {
+		Edge e = new Edge(u, v, info, true, weight);
 		edges.add(e);
 		return e;
 	}
@@ -468,28 +473,102 @@ public class Graph {
 	public void dijkstra(Vertex s) {
 		// check that v is in vertices
 		if (vertices.contains(s)) {
+			System.out.println("Source s has " + s.outDegree() + " outbound edges.");
 			Iterator<Vertex> itr = vertices.iterator();
 			
 			// Initialize all vertices to have infinite distance
 			while (itr.hasNext()) {
 				Vertex v = itr.next();
-				v.setAnnotation("dist", -1);
-				v.setAnnotation("previous",	null);
+				v.setDist(-1);
+				v.setPrev(null);
 			}
-			s.setAnnotation("dist", 0);
+			s.setDist(0);
+			ArrayList<Vertex> bigS = new ArrayList<Vertex>();
 			ArrayList<Vertex> q = (ArrayList<Vertex>) vertices.clone();
 			
-			itr = q.iterator();
+			//itr = q.iterator();
 			
-			while(itr.hasNext()) {
+			while (q.size() > 0) { // while Q is not empty
+				
 				Vertex u = minDistance(q);
-				Iterator<Edge> adj_itr = u.incidentEdges();
+				
+				System.out.print("Iterating vertex "+u.id() + ": ");
+				if (u.getDist() == -1) { // check for infinity
+					// if the minimum is infinite, then all
+					// all remaining vertices are inaccessible from source
+					// so currently, minDistance() is broken
+					System.out.println("Infinite");
+					//Iterator<Vertex> itr2 = u.outAdjacentVertices();
+					//while (itr2.hasNext()) {
+					//	Vertex x = itr2.next();
+						//System.out.println(x.id()+":"+x.getDist() + "; ");
+					//}
+					//System.out.println();
+					break;
+				} else { System.out.println(u.getDist()); }
+				q.remove(u);
+				bigS.add(u);
+				Iterator<Edge> adj_itr = u.outIncidentEdges();
 				while (adj_itr.hasNext()) {
 					Edge e = adj_itr.next();
+					relax(e);
 					
+					//float alt = u.getDist() + e.getDist();
+					//Vertex v = e.destination();
+					//if (alt < v.getDist()) {
+					//	v.setDist(alt);
+					//	v.setPrev(u);
+					//}
 				}
+				//System.out.println("Finished relaxing edges");
+				//itr2 = u.outIncidentEdges();
+				//while (itr2.hasNext()) {
+				//	Edge e = itr2.next();
+					//Vertex x = e.destination();
+					//System.out.print(x.id()+":"+x.getDist() + ", ");
+					//System.out.print("Edge: " + e.getDist() + "; ");
+				//}
+				//System.out.println();
+			}
+			
+			itr = bigS.iterator();
+			System.out.print("S: ");
+			while (itr.hasNext()) {
+				Vertex v = itr.next();
+				
+				System.out.print(v.id()+":"+v.getDist() + ", ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public Vertex minDistance(ArrayList<Vertex> vertexArray) {
+		Iterator<Vertex> itr = vertexArray.iterator();
+		Vertex min = vertexArray.get(0);
+		
+		while (itr.hasNext()) {
+			Vertex u = itr.next();
+						
+			// if u is not infinite AND either (u is less than min OR min is infinite)
+			if ((u.getDist() != -1) && ((u.getDist() < min.getDist()) || (min.getDist() == -1))) {
+				min = u;
 			}
 		}
+		
+		return min;
+	}
+	
+	public void relax(Edge e) {
+		Vertex verts[] = e.endVertices();
+		Vertex u = verts[0];
+		Vertex v = verts[1];
+		
+		if ((v.getDist() == -1) || (v.getDist() > u.getDist() + e.getDist())) {
+			//System.out.println("Relaxing "+u.id() + "->"+v.id() +" to weight " + (u.getDist() + e.getDist()));
+			v.setDist(u.getDist() + e.getDist());
+			v.setPrev(u);
+		}
+			
 	}
 
 	// arraylist doesn't have these basic functions built in + no anonymous functions

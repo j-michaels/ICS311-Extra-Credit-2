@@ -8,14 +8,24 @@ public class Edge {
 	private Vertex v;
 	private Map<Object,Object> annotations;
 	private boolean directed;
+	private float distance;
 	
-	public Edge(Vertex u, Vertex v, Object info, boolean d) {
+	public Edge(Vertex u, Vertex v, Object info, boolean d, float w) {
+		this.distance = w;
 		this.u = u;
 		this.v = v;
 		u.insertAdjacentEdge(this);
 		v.insertAdjacentEdge(this);
 		annotations = new HashMap<Object,Object>();
 		this.directed = d;
+	}
+	
+	public float getDist() {
+		return this.distance;
+	}
+	
+	public void setDist(float dist) {
+		this.distance = dist;
 	}
 	
 	public Vertex[] endVertices() {
