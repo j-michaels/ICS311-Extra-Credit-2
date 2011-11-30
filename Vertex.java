@@ -6,19 +6,37 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Vertex {
-	Object data;
+	private String name;
 	private Map<Object,Object> annotations;
 	private int id;
 	private float distance;
+	private boolean infiniteDistance;
 	private Vertex previous;
 	
 	ArrayList<Edge> incidentEdges;
 	
-	public Vertex(Object data) {
+	public Vertex(String name) {
 		incidentEdges = new ArrayList<Edge>();
-		this.data = data;
+		this.name = name;
 		annotations = new HashMap<Object,Object>();
 		distance = 0;
+		infiniteDistance = true;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public boolean getInfDist() {
+		return infiniteDistance;
+	}
+	
+	public void setInfDist(boolean inf) {
+		this.infiniteDistance = inf;
 	}
 	
 	// Accessors

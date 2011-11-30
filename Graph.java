@@ -36,7 +36,7 @@ public class Graph {
 		FileReader reader;
 		
 		try {
-			reader = new FileReader("inputfile");
+			reader = new FileReader(fileName);
 			BufferedReader br = new BufferedReader(reader);
 			String nextLine;
 			String mode = "";
@@ -217,8 +217,8 @@ public class Graph {
 		return e;
 	}
 	
-	public Vertex insertVertex(Object info) {
-		Vertex v = new Vertex(info);
+	public Vertex insertVertex(String name) {
+		Vertex v = new Vertex(name);
 		vertices.add(v);
 		return v;
 	}
@@ -470,34 +470,36 @@ public class Graph {
 		return null;
 	}
 	
-	public void dijkstra(Vertex s) {
+	public PathResult dijkstra(Vertex s) {
+		PathResult result = null;
 		// check that v is in vertices
 		if (vertices.contains(s)) {
-			System.out.println("Source s has " + s.outDegree() + " outbound edges.");
+			//System.out.println("Source s has " + s.outDegree() + " outbound edges.");
 			Iterator<Vertex> itr = vertices.iterator();
 			
 			// Initialize all vertices to have infinite distance
 			while (itr.hasNext()) {
 				Vertex v = itr.next();
-				v.setDist(-1);
+				v.setDist(0);
+				v.setInfDist(true);
 				v.setPrev(null);
 			}
 			s.setDist(0);
+			s.setInfDist(false);
 			ArrayList<Vertex> bigS = new ArrayList<Vertex>();
 			ArrayList<Vertex> q = (ArrayList<Vertex>) vertices.clone();
 			
 			//itr = q.iterator();
 			
 			while (q.size() > 0) { // while Q is not empty
-				
 				Vertex u = minDistance(q);
 				
-				System.out.print("Iterating vertex "+u.id() + ": ");
-				if (u.getDist() == -1) { // check for infinity
+				//System.out.print("Iterating vertex "+u.id() + ": ");
+				if (u.getInfDist()) { // check for infinity
 					// if the minimum is infinite, then all
 					// all remaining vertices are inaccessible from source
 					// so currently, minDistance() is broken
-					System.out.println("Infinite");
+					//System.out.println("Infinite");
 					//Iterator<Vertex> itr2 = u.outAdjacentVertices();
 					//while (itr2.hasNext()) {
 					//	Vertex x = itr2.next();
@@ -505,7 +507,7 @@ public class Graph {
 					//}
 					//System.out.println();
 					break;
-				} else { System.out.println(u.getDist()); }
+				}// else { System.out.println(u.getDist()); }
 				q.remove(u);
 				bigS.add(u);
 				Iterator<Edge> adj_itr = u.outIncidentEdges();
@@ -530,16 +532,28 @@ public class Graph {
 				//}
 				//System.out.println();
 			}
-			
+			/*
 			itr = bigS.iterator();
-			System.out.print("S: ");
+			System.out.println("S: ");
 			while (itr.hasNext()) {
 				Vertex v = itr.next();
 				
-				System.out.print(v.id()+":"+v.getDist() + ", ");
+				System.out.println(v.id()+":"+v.getDist());
+			}*/
+			//System.out.println();
+			
+			// Strip out infinite vertices
+			ArrayList<Vertex> resultVertices = (ArrayList<Vertex>) vertices.clone();
+			Iterator<Vertex> res_itr = resultVertices.iterator();
+			while (res_itr.hasNext()) {
+				Vertex d = res_itr.next();
+				if (d.getInfDist()) {
+					resultVertices.remove(d);
+				}
 			}
-			System.out.println();
+			result = new PathResult(s.getName(), true, resultVertices);
 		}
+		return result;
 	}
 	
 	public Vertex minDistance(ArrayList<Vertex> vertexArray) {
@@ -550,7 +564,7 @@ public class Graph {
 			Vertex u = itr.next();
 						
 			// if u is not infinite AND either (u is less than min OR min is infinite)
-			if ((u.getDist() != -1) && ((u.getDist() < min.getDist()) || (min.getDist() == -1))) {
+			if ((!u.getInfDist()) && ((u.getDist() < min.getDist()) || (min.getInfDist()))) {
 				min = u;
 			}
 		}
@@ -563,12 +577,17 @@ public class Graph {
 		Vertex u = verts[0];
 		Vertex v = verts[1];
 		
-		if ((v.getDist() == -1) || (v.getDist() > u.getDist() + e.getDist())) {
-			//System.out.println("Relaxing "+u.id() + "->"+v.id() +" to weight " + (u.getDist() + e.getDist()));
+		// (x, inf) always set
+		// (inf, x) ignore
+		// (inf, inf) ignore
+		
+		if ((u.getInfDist() != true) && ((v.getInfDist()) || (v.getDist() > u.getDist() + e.getDist()))) {
+			//System.out.println("Relaxing "+u.id()+","+u.getDist() + "->"+v.id() +","+v.getDist()+" to weight " + (u.getDist() + e.getDist()));
 			v.setDist(u.getDist() + e.getDist());
+			v.setInfDist(false);
+			//System.out.println("New value for "+v.id() + ": " + v.getDist());
 			v.setPrev(u);
 		}
-			
 	}
 
 	// arraylist doesn't have these basic functions built in + no anonymous functions
@@ -608,5 +627,58 @@ public class Graph {
 		maxOutDegree = maxOut;
 		avgInDegree = (double)sumIn / vertices.size();
 		avgOutDegree = (double)sumOut / vertices.size();
+	}
+
+	public boolean bellmanford(Vertex s) {
+		// TODO Auto-generated method stub
+		Iterator<Vertex> itr = vertices.iterator();
+		System.out.println("Starting Bellman-Ford from vertex "+s.id());
+		
+		// Initialize all vertices to have infinite distance
+		while (itr.hasNext()) {
+			Vertex v = itr.next();
+			v.setDist(0);
+			v.setInfDist(true);
+			v.setPrev(null);
+		}
+		s.setDist(0);
+		s.setInfDist(false);
+		
+		for (int i=1; i<numVertices()-1; i++) {
+			Iterator<Edge> itr2 = edges.iterator();
+			while (itr2.hasNext()) {
+				relax(itr2.next());
+			}
+		}
+		
+		Iterator<Edge> edge_itr = edges.iterator();
+		while (edge_itr.hasNext()) {
+			Edge e = edge_itr.next();
+			Vertex u = e.origin();
+			Vertex v = e.destination();
+			//String uinf = "";
+			//String vinf = "";
+			//if (u.getInfDist()) uinf = "inf";
+			//if (v.getInfDist()) vinf = "vinf";
+			//System.out.println(u.id() +"("+u.getDist()+uinf+")->"+v.id() +"("+v.getDist()+vinf+ "): "+e.getDist());
+			// What if u is infinity?
+			// What about v?
+			// (x, inf) this will never happen if there is an edge
+			// (inf, x) same as above
+			// (inf, inf) irrelevant
+			if (!u.getInfDist() && !v.getInfDist()) {
+				if ((u.getDist() + e.getDist() < v.getDist())) {
+					return false;
+				}
+			}
+		}
+		/*
+		Iterator<Vertex> vert_itr = vertices.iterator();
+		while (vert_itr.hasNext()) {
+			Vertex v = vert_itr.next();
+			System.out.println("Vertex "+v.id() + ": "+v.getDist());
+		}
+		*/
+		return true;
 	}
 }
