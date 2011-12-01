@@ -9,16 +9,19 @@ public class PathResult {
 	
 	public ArrayList<Integer> pathLengths;
 	public ArrayList<String> pathNames;
-	public ArrayList<Vertex> vertices;
+	public ArrayList<ArrayList<Path>> results;
 	
-	public PathResult(String sourceId, boolean success, ArrayList<ArrayList<Vertex>> sequences) {
-		this.sourceId = sourceId;
-		this.success = success;
-		this.vertices = vertices;
+	public PathResult() {
+		results = new ArrayList<ArrayList<Path>>();
 	}
+	
+	public void addResult(ArrayList<Path> result) {
+		results.add(result);
+	}
+	
 	public String print() {
 		String pres = "";
-		Iterator<Vertex> itr = vertices.iterator();
+		//Iterator<Vertex> itr = vertices.iterator();
 		int i = 0;
 		int avg = 0;
 		String minName = "";
@@ -27,7 +30,7 @@ public class PathResult {
 		boolean noMaxYet = true;
 		String maxName = "";
 		float max = 0;
-		
+		/*
 		while (itr.hasNext()) {
 			Vertex v = itr.next();
 			float length = v.getDist();
@@ -44,12 +47,8 @@ public class PathResult {
 				maxName = name;
 			}
 			i++;
-		}
+		}*/
 		pres = sourceId + "		" + minName + ":" + min + "	" + (avg/pathNames.size()) + "	" + maxName + ":"+max;
 		return pres;
-	}
-	
-	public void constructPaths() {
-		
 	}
 }

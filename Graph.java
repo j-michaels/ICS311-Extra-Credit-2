@@ -23,6 +23,7 @@ public class Graph {
 	private double avgOutDegree;
 	private int maxInDegree;
 	private int maxOutDegree;
+	private Vertex source;
 	
 	public Graph() {
 		edges = new ArrayList<Edge>();
@@ -460,6 +461,10 @@ public class Graph {
 		
 	}
 	
+	public void setSource(Vertex s) {
+		this.source = s;
+	}
+	
 	private Vertex findRoot(ArrayList<Vertex> av) {
 		// TODO Auto-generated method stub
 		Iterator<Vertex> itr = av.iterator();
@@ -470,10 +475,10 @@ public class Graph {
 		return null;
 	}
 	
-	public PathResult dijkstra(Vertex s) {
-		PathResult result = null;
+	public void dijkstra(Vertex s) {
 		// check that v is in vertices
 		if (vertices.contains(s)) {
+			this.setSource(s);
 			//System.out.println("Source s has " + s.outDegree() + " outbound edges.");
 			Iterator<Vertex> itr = vertices.iterator();
 			
@@ -543,17 +548,51 @@ public class Graph {
 			//System.out.println();
 			
 			// Strip out infinite vertices
-			ArrayList<Vertex> resultVertices = (ArrayList<Vertex>) vertices.clone();
+			/*ArrayList<Vertex> resultVertices = (ArrayList<Vertex>) vertices.clone();
 			Iterator<Vertex> res_itr = resultVertices.iterator();
 			while (res_itr.hasNext()) {
 				Vertex d = res_itr.next();
 				if (d.getInfDist()) {
 					resultVertices.remove(d);
 				}
-			}
-			result = new PathResult(s.getName(), true, resultVertices);
+			}*/
+			//result = new PathResult(s.getName(), true, resultVertices);
 		}
-		return result;
+	}
+	
+	// build a list of paths (sequences of vertices) for each vertex other than the source
+	public ArrayList<Path> constructPaths() {
+		ArrayList<Path> results = new ArrayList<Path>();
+		// one way to speed this up would be to only iterate through
+		// vertices for which paths exist
+		// these could be tabulated through relax()
+		Iterator<Vertex> itr = vertices.iterator();
+		int invalid = 0;
+		while (itr.hasNext()) {
+			
+			Vertex v = itr.next();
+			//System.out.println("Looking for a path from v:"+v.getName() +" to source");
+			if (!v.getInfDist() && (v != source)) {
+				
+				ArrayList<Vertex> sequence = new ArrayList<Vertex>();
+				sequence.add(v);
+				while ((v.getPrev() != null) && (v.getPrev() != source)) {
+					v = v.getPrev();
+					sequence.add(v);
+				}
+				sequence.add(source);
+				Collections.reverse(sequence);
+				Path p = new Path(sequence);
+				if (p.valid) {
+					results.add(p);
+				} else {
+					invalid++;
+				}
+				
+			}
+		}
+		//System.out.println("Invalid: "+ invalid);
+		return results;
 	}
 	
 	public Vertex minDistance(ArrayList<Vertex> vertexArray) {
