@@ -36,13 +36,14 @@ public class Path {
 	
 	public void print() {
 		Iterator<Vertex> itr = sequence.iterator();
-		
+		System.out.print(len + " length: ");
 		while (itr.hasNext()) {
 			Vertex v = itr.next();
+			
 			if (itr.hasNext()) {
 				System.out.print(v.getName()+"->");
 			} else {
-				System.out.println(v.getName() + " ("+len+")");
+				System.out.println(v.getName());
 				break;
 			}
 		}

@@ -670,8 +670,9 @@ public class Graph {
 
 	public boolean bellmanford(Vertex s) {
 		// TODO Auto-generated method stub
+		source = s;
 		Iterator<Vertex> itr = vertices.iterator();
-		System.out.println("Starting Bellman-Ford from vertex "+s.id());
+		//System.out.println("Starting Bellman-Ford from vertex "+s.id());
 		
 		// Initialize all vertices to have infinite distance
 		while (itr.hasNext()) {
