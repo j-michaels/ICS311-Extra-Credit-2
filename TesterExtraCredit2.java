@@ -2,9 +2,7 @@ package ics311;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class TesterExtraCredit2 {
 
@@ -21,8 +19,10 @@ public class TesterExtraCredit2 {
 		g.readFromFile(args[0]);
 		
 		// Dijstra's Algorithm
+		System.out.println("Beginning iterated Dijkstra on data from file '"+args[0] +"'");
 		Iterator<Vertex> itr = g.vertices();
 		ArrayList<Path> results = new ArrayList<Path>();
+		long beginTime = System.nanoTime();
 		while (itr.hasNext()) {
 			Vertex v = itr.next();
 			//System.out.println("Running Dijstra's Algorithm on vertex " +v.id());
@@ -30,25 +30,28 @@ public class TesterExtraCredit2 {
 			//System.out.println("Total valid paths discovered: "+pathsArr.size());
 			results.addAll(g.constructPaths());
 		}
+		System.out.println("Iterated Dijkstra took: " + (System.nanoTime() - beginTime) + "ns");
 		printPaths(results);
+		System.out.println();
 		
 		if (args.length > 1) {
-			// Iterated Bellman-Ford 
+			// Iterated Bellman-Ford
+			System.out.println("Beginning iterated Bellman-Ford on data from file '" + args[1]+"'");
 			Graph bf = new Graph();
 			results = new ArrayList<Path>();
 			bf.readFromFile(args[1]);
-			long beginTime = System.nanoTime();
+			beginTime = System.nanoTime();
 			Iterator<Vertex> bf_itr = bf.vertices();
 			while (bf_itr.hasNext()) {
 				Vertex v = bf_itr.next();
 				boolean neg = bf.bellmanford(v);
 				if (!neg) {
-					System.out.println("Error: Negative cycle from "+v.id());
+					System.out.println("Terminating due to a negative cycle.");
 					System.exit(1);
 				}
 				results.addAll(bf.constructPaths());
 			}
-			System.out.println("Iterated Bellman-Ford took: " + (System.nanoTime() - beginTime));
+			System.out.println("Iterated Bellman-Ford took: " + (System.nanoTime() - beginTime) + "ns");
 			printPaths(results);
 		}
 		// Johnson's Algorithm

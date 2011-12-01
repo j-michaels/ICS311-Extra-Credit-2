@@ -1,145 +1,117 @@
 Testing Document
 
-I tested with smaller data sets that I was able to compute the SCC for
-by hand, and the results my program gave were correct. However, due to
-the immense size and complexity of these test graphs, it is too time
-consuming to verify their accuracy.
+For the output, I was not completely sure what was meant by "Minimum, Average and Maximum
+path length across the entire graph.", as it seems like that is already included in the
+top 10 lists for shortest and longest path length.
 
-One thing I noticed and worried about is that the average for in and out
-degrees is the same for every test. After considering it, I realized it
-must be this way, because when computing the average, each directed edge
-is in fact counted twice -- once for each of the endpoints. Thus, the
-average of all vertices will end up being the same.
-
-------------------------------------------------------------
-Graph karate
-------------------------------------------------------------
-|V| = 34
-|E| = 78
-Degree distribution:	minimum		average	    	max
-inDegree(v)	        	0	    	2.294	    	16
-outDegree(v)		    0		    2.294	    	17
-Number of Strongly Connected Components: 34
-Top 20 SCC by size:
-ID	Root	Highest Degree Vertices
-0	29		deg(29) = 17
-1	26		deg(26) = 16
-2	27		deg(27) = 12
-3	24		deg(24) = 10
-4	25		deg(25) = 9
-5	23		deg(23) = 6
-6	13		deg(13) = 6
-7	20		deg(20) = 5
-8	16		deg(16) = 5
-9	32		deg(32) = 5
-10	33		deg(33) = 4
-11	21		deg(21) = 4
-12	18		deg(18) = 4
-13	15		deg(15) = 4
-14	8		deg(8) = 4
-15	3		deg(3) = 4
-16	14		deg(14) = 3
-17	31		deg(31) = 3
-18	34		deg(34) = 3
-19	12		deg(12) = 3
-20	2		deg(2) = 3
-
-------------------------------------------------------------
-Graph c-elegans
-------------------------------------------------------------
-|V| = 297
-|E| = 2345
-Degree distribution:	minimum		average		max
-inDegree(v)		        0		    3.39		18
-outDegree(v)		    0		    3.39		16
-Number of Strongly Connected Components: 139
-Top 20 SCC by size:
-ID	Root	Highest Degree Vertices
-0	45		deg(45) = 134
-1	2		deg(13) = 83
-2	191		deg(191) = 31
-3	178		deg(178) = 25
-4	114		deg(114) = 22
-5	24		deg(24) = 21
-6	190		deg(190) = 20
-7	201		deg(220) = 20
-8	150		deg(150) = 19
-9	234		deg(234) = 19
-10	36		deg(36) = 18
-11	98		deg(98) = 18
-12	198		deg(198) = 17
-13	47		deg(47) = 17
-14	285		deg(285) = 16
-15	169		deg(169) = 16
-16	232		deg(232) = 16
-17	277		deg(277) = 16
-18	167		deg(167) = 16
-19	170		deg(170) = 15
-20	179		deg(179) = 15
+The results of C-Elegans (Nonnegative) show a difference between Dijkstra's and Bellman-Ford
+in which path was chosen. There's only a few vertices different, and the path lengths ends up
+exactly the same, but noticing it made me realize that my method of inspecting all the path
+lengths is in fact not looking at *all* of them, only the ones selected by the algorithm.
+I'm not sure whether this is incorrect or not, and besides, it might be computationally
+prohibitive to look at all possible paths.
 
 
-------------------------------------------------------------
-Graph political-blogs
-------------------------------------------------------------
-|V| = 1490
-|E| = 19025
-Degree distribution:	minimum		average		max
-inDegree(v)		        0		    12.727		336
-outDegree(v)		    0	        12.727		256
-Number of Strongly Connected Components: 689
-Top 20 SCC by size:
-ID	Root	Highest Degree Vertices
-0	1		deg(855) = 467
-1	798		deg(798) = 143
-2	1330	deg(1330) = 114
-3	514		deg(514) = 103
-4	56		deg(56) = 88
-5	996		deg(996) = 82
-6	990		deg(990) = 81
-7	154		deg(154) = 80
-8	979		deg(979) = 75
-9	24		deg(24) = 58
-10	1410	deg(1410) = 56
-11	219		deg(219) = 56
-12	609		deg(609) = 56
-13	233		deg(233) = 56
-14	1086	deg(1086) = 52
-15	1439	deg(1439) = 46
-16	248		deg(248) = 45
-17	1067	deg(1067) = 42
-18	296		deg(296) = 41
-19	886		deg(886) = 39
-20	779		deg(779) = 39
+Karate 
+Iterated Dijkstra took: 6571000ns
+Average path length: 1
+Top 10 shortest path lengths:
+1.0 length: 1->25
+1.0 length: 1->26
+1.0 length: 2->3
+1.0 length: 2->9
+1.0 length: 2->26
+1.0 length: 3->26
+1.0 length: 4->3
+1.0 length: 4->8
+1.0 length: 5->25
+1.0 length: 5->26
+Top 10 longest path lengths:
+3.0 length: 13->14->24->25
+2.0 length: 33->24->26
+2.0 length: 33->24->25
+2.0 length: 30->24->26
+2.0 length: 30->24->25
+2.0 length: 29->13->34
+2.0 length: 29->13->31
+2.0 length: 29->12->26
+2.0 length: 29->12->25
+2.0 length: 29->14->24
 
-------------------------------------------------------------
-Graph ti-chat
-------------------------------------------------------------
-|V| = 12833
-|E| = 38933
-Degree distribution:	minimum		average		max
-inDegree(v)		        0		    0.192		23
-outDegree(v)		    0		    0.192		72
-Number of Strongly Connected Components: 12699
-Top 20 SCC by size:
-ID	Root	Highest Degree Vertices
-0	30		deg(30) = 1476
-1	48		deg(48) = 934
-2	93		deg(93) = 665
-3	49		deg(49) = 569
-4	355		deg(355) = 509
-5	1324	deg(1324) = 431
-6	1471	deg(1471) = 428
-7	454		deg(454) = 407
-8	39		deg(39) = 372
-9	1700	deg(1700) = 354
-10	4201	deg(4201) = 352
-11	28		deg(28) = 346
-12	85		deg(85) = 317
-13	294		deg(294) = 311
-14	948		deg(948) = 302
-15	51		deg(51) = 298
-16	260		deg(260) = 266
-17	2022	deg(2022) = 265
-18	542		deg(542) = 258
-19	1629	deg(1629) = 224
-20	1284	deg(1284) = 221
+Iterated Bellman-Ford took: 16904000ns
+Average path length: 1
+Top 10 shortest path lengths:
+1.0 length: 1->25
+1.0 length: 1->26
+1.0 length: 2->3
+1.0 length: 2->9
+1.0 length: 2->26
+1.0 length: 3->26
+1.0 length: 4->3
+1.0 length: 4->8
+1.0 length: 5->25
+1.0 length: 5->26
+Top 10 longest path lengths:
+3.0 length: 13->14->24->25
+2.0 length: 33->24->26
+2.0 length: 33->24->25
+2.0 length: 30->24->26
+2.0 length: 30->24->25
+2.0 length: 29->33->34
+2.0 length: 29->13->31
+2.0 length: 29->12->26
+2.0 length: 29->12->25
+2.0 length: 29->30->24
+
+
+c-elegans (nonnegative)
+Iterated Dijkstra took: 378686000ns
+Average path length: 5
+Top 10 shortest path lengths:
+1.0 length: 1->2
+1.0 length: 1->4
+1.0 length: 1->6
+1.0 length: 1->9
+1.0 length: 2->11
+1.0 length: 2->75
+1.0 length: 2->116
+1.0 length: 2->130
+1.0 length: 2->132
+1.0 length: 3->9
+Top 10 longest path lengths:
+35.0 length: 265->276->163->164->165->166->98->222->178->126->172->247->278
+33.0 length: 267->277->165->166->98->222->178->126->172->247->278
+32.0 length: 265->276->163->164->165->166->98->222->178->126->43->138->113->224
+32.0 length: 265->276->163->164->165->166->98->222->178->173->130->2->11->209
+32.0 length: 265->276->163->164->165->166->98->222->178->171->120->149->148->151
+32.0 length: 265->276->163->164->165->166->98->222->178->171->120->143->103->114->141->128
+32.0 length: 265->276->163->164->165->166->98->222->178->173->130->2->116->127
+32.0 length: 265->276->163->164->165->166->98->222->178->126->257->13->17->20->81
+31.0 length: 265->276->163->164->165->166->98->222->178->126->43->138->73->94->217->240
+31.0 length: 265->276->163->164->165->166->98->222->178->126->185->99->192->142->150
+
+Iterated Bellman-Ford took: 1471442000ns
+Average path length: 5
+Top 10 shortest path lengths:
+1.0 length: 1->2
+1.0 length: 1->4
+1.0 length: 1->6
+1.0 length: 1->9
+1.0 length: 2->11
+1.0 length: 2->75
+1.0 length: 2->116
+1.0 length: 2->130
+1.0 length: 2->132
+1.0 length: 3->9
+Top 10 longest path lengths:
+35.0 length: 265->276->163->164->165->166->167->222->178->126->172->247->278
+33.0 length: 267->277->165->166->167->222->178->126->172->247->278
+32.0 length: 265->276->163->164->165->166->167->222->178->126->43->138->113->224
+32.0 length: 265->276->163->164->165->166->167->222->178->173->130->2->11->209
+32.0 length: 265->276->163->164->165->166->167->222->178->171->120->149->148->151
+32.0 length: 265->276->163->164->165->166->167->222->178->126->185->99->192->114->141->128
+32.0 length: 265->276->163->164->165->166->167->222->178->173->130->2->116->127
+32.0 length: 265->276->163->164->165->166->167->222->178->126->257->13->17->20->81
+31.0 length: 265->276->163->164->165->166->167->222->178->126->188->200->146->94->217->240
+31.0 length: 265->276->163->164->165->166->167->222->178->126->185->99->192->142->150
+
