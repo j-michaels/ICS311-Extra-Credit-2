@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 public class Path {
 	public int firstId;
+	public int secondId;
 	public String id;
 	public boolean valid;
 	public ArrayList<Vertex> sequence;
@@ -16,6 +17,7 @@ public class Path {
 			Vertex destination = sequence.get(sequence.size()-1);
 			if (origin != destination) {
 				this.firstId = origin.id();
+				this.secondId = destination.id();
 				this.id = origin.getName()+":"+destination.getName();
 				// Length is stored because none of the vertices are clones
 				// so if another run of dijkstra's is performed, the length values

@@ -12,7 +12,11 @@ public class AscendingPathComparator implements Comparator<Path> {
 		else { // They're even, so go off the id of the first vertex in the sequence
 			if (p1.firstId < p2.firstId) return -1;
 			else if (p1.firstId > p2.firstId) return 1;
-			return 0;
+			else {
+				if (p1.secondId < p2.secondId) return -1;
+				else if (p1.secondId > p2.secondId) return 1;
+				return 0;
+			}
 		}
 	}
 	

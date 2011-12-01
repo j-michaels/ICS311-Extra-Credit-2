@@ -1,17 +1,36 @@
 Testing Document
 
 For the output, I was not completely sure what was meant by "Minimum, Average and Maximum
-path length across the entire graph.", as it seems like that is already included in the
-top 10 lists for shortest and longest path length.
+path length across the entire graph.", as it seems like min and max are already included in
+the top 10 lists for shortest and longest path length.
 
-The results of C-Elegans (Nonnegative) show a difference between Dijkstra's and Bellman-Ford
-in which path was chosen. There's only a few vertices different, and the path lengths ends up
+Several of the results show a difference between Dijkstra's and Bellman-Ford in which path
+was chosen. There's only a few vertices different, and the path lengths end up
 exactly the same, but noticing it made me realize that my method of inspecting all the path
 lengths is in fact not looking at *all* of them, only the ones selected by the algorithm.
 I'm not sure whether this is incorrect or not, and besides, it might be computationally
 prohibitive to look at all possible paths.
 
+The results also show a very noticeable different in performance between the two algorithms.
+By the 1490-vertex political-blogs data, running Bellman-Ford took a considerably greater
+amount of time. Theory claims that Dijkstra's algorithm worse-case performance is roughly O(|V|+|E|),
+depending on implementation, whereas Bellman-Ford's algorithm is theoretically O(|V|á|E|).
+The time results seem to agree with this. 
 
+Unfortunately I ran out of memory on the ti-chat data, even after increasing the JVM heap
+size as much as I could.
+
+Additionally, my Bellman-Ford algorithm looks for the negative weight cycle when it detects
+one. I implemented this because the negative weight c-elegans data provided was returning
+that it has a negative cycle, and I wanted to make sure it wasn't a bug in my code. In fact,
+there is a negative cycle, following this path:
+
+v126 ---> v257 ---> v221 ---> v3 ---> v126 
+	  -1	    1		  1		 -28
+	  
+I suppose there could still be a bug in my code, and I'm not sure my method of looking for
+the negative cycle will be successful for all data.
+	  
 Karate 
 Iterated Dijkstra took: 6571000ns
 Average path length: 1
@@ -115,3 +134,53 @@ Top 10 longest path lengths:
 31.0 length: 265->276->163->164->165->166->167->222->178->126->188->200->146->94->217->240
 31.0 length: 265->276->163->164->165->166->167->222->178->126->185->99->192->142->150
 
+political-blogs
+Iterated Dijkstra took: 5797789000ns
+Average path length: 3
+Top 10 shortest path lengths:
+1.0 length: 1->23
+1.0 length: 1->55
+1.0 length: 1->85
+1.0 length: 1->155
+1.0 length: 1->323
+1.0 length: 1->367
+1.0 length: 1->434
+1.0 length: 1->483
+1.0 length: 1->575
+1.0 length: 1->641
+Top 10 longest path lengths:
+9.0 length: 1490->802->963->301->180->1245->1232->765->791->1407
+9.0 length: 1490->802->963->301->155->55->467->855->793->1396
+9.0 length: 1490->802->963->301->180->1051->762->775->1364->1366
+9.0 length: 1490->802->963->301->155->55->467->855->793->1305
+9.0 length: 1490->802->963->301->180->1051->762->775->1402->1252
+9.0 length: 1490->802->963->301->155->55->467->855->793->1213
+9.0 length: 1490->802->963->301->155->55->467->855->1076->1203
+9.0 length: 1490->802->963->301->155->55->467->855->882->1188
+9.0 length: 1490->802->963->301->180->1051->762->768->1378->1186
+9.0 length: 1490->802->963->301->155->55->467->855->787->1003
+
+Iterated Bellman-Ford took: 241832526000ns
+Average path length: 3
+Top 10 shortest path lengths:
+1.0 length: 1->23
+1.0 length: 1->55
+1.0 length: 1->85
+1.0 length: 1->155
+1.0 length: 1->323
+1.0 length: 1->367
+1.0 length: 1->434
+1.0 length: 1->483
+1.0 length: 1->575
+1.0 length: 1->641
+Top 10 longest path lengths:
+9.0 length: 1490->802->963->301->180->1245->1232->765->791->1407
+9.0 length: 1490->802->963->301->623->741->1153->1172->793->1396
+9.0 length: 1490->802->963->301->180->205->515->851->1364->1366
+9.0 length: 1490->802->963->301->623->741->1153->1172->793->1305
+9.0 length: 1490->802->963->301->180->615->777->775->1402->1252
+9.0 length: 1490->802->963->301->623->741->1153->1172->793->1213
+9.0 length: 1490->802->963->301->623->644->467->855->1076->1203
+9.0 length: 1490->802->963->301->623->644->467->855->882->1188
+9.0 length: 1490->802->963->301->180->1051->762->768->1378->1186
+9.0 length: 1490->802->963->301->180->205->515->851->1487->1003
